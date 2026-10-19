@@ -19,5 +19,7 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Run Python application
+      - name: Run Python application in CMD
+        shell: cmd
         run: python app.py
+ 
