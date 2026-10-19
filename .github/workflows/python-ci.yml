@@ -22,3 +22,6 @@ jobs:
       - name: Run Python application
         shell: cmd
         run: '"C:\Users\T50755\AppData\Local\Programs\Python\Python311\python.exe" app.py'
+      - name: Run automated tests
+        shell: cmd
+        run: python -m unittest discover -v
