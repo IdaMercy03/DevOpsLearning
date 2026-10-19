@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   run-python:
@@ -14,12 +15,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python in CMD
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Run Python application in CMD
+      - name: Check Python version
         shell: cmd
-        run: python app.py
- 
+        run: '"C:\Users\T50755\AppData\Local\Programs\Python\Python311\python.exe"'
+
+      - name: Run Python application
+        shell: cmd
+        run: '"C:\Users\T50755\AppData\Local\Programs\Python\Python311\python.exe" app.py'
