@@ -25,3 +25,18 @@ jobs:
       - name: Run automated tests
         shell: cmd
         run: python -m unittest discover -v
+
+        
+      - name: Package Python application
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist
+          Copy-Item *.py dist/
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-app-build
+          path: dist/
+          if-no-files-found: error
+      
