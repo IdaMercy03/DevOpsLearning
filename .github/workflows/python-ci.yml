@@ -28,10 +28,10 @@ jobs:
 
         
       - name: Package Python application
-        shell: pwsh
+        shell: cmd
         run: |
-          New-Item -ItemType Directory -Force -Path dist
-          Copy-Item *.py dist/
+          if not exist dist mkdir dist
+          copy /Y *.py dist\
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -39,4 +39,4 @@ jobs:
           name: python-app-build
           path: dist/
           if-no-files-found: error
-      
+          retention-days: 7
