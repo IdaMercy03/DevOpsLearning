@@ -1,6 +1,6 @@
 
 name: Validate and Zip Developer Code
-description: Validates developer source code and saves a ZIP file on the D drive
+description: Validates developer code and packages it as a ZIP file
 
 inputs:
   source-path:
@@ -8,61 +8,56 @@ inputs:
     required: true
 
   destination:
-    description: Destination folder on the Windows runner
+    description: Destination folder on the runner
     required: false
     default: 'D:\DevOpsPackages'
 
 runs:
   using: composite
   steps:
-    - name: Validate path, create ZIP, and verify output
+    - name: Validate path and create ZIP using CMD
       shell: cmd
       env:
         SOURCE_PATH: ${{ inputs.source-path }}
         DESTINATION: ${{ inputs.destination }}
       run: |
-        powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "& {
-          $ErrorActionPreference = 'Stop'
+        echo Checking source directory...
+        if not exist "%SOURCE_PATH%\." (
+          echo ERROR: Source directory does not exist: %SOURCE_PATH%
+          exit /b 1
+        )
 
-          $sourcePath = $env:SOURCE_PATH
-          $destination = $env:DESTINATION
+        echo Checking D drive...
+        if not exist "D:\" (
+          echo ERROR: D drive is not available.
+          exit /b 1
+        )
 
-          if (-not (Test-Path -LiteralPath $sourcePath -PathType Container)) {
-            throw 'Source directory does not exist: ' + $sourcePath
-          }
+        echo Checking ZIP utility...
+        where tar.exe >nul 2>&1
+        if errorlevel 1 (
+          echo ERROR: tar.exe is not available on this runner.
+          exit /b 1
+        )
 
-          if (-not (Test-Path -LiteralPath 'D:\' -PathType Container)) {
-            throw 'D: drive is not available on this runner.'
-          }
+        echo Creating destination directory...
+        if not exist "%DESTINATION%\." mkdir "%DESTINATION%"
+        if errorlevel 1 exit /b 1
 
-          New-Item -ItemType Directory -Force -Path $destination | Out-Null
+        echo Creating ZIP archive...
+        if exist "%DESTINATION%\DeveloperCode.zip" del /q "%DESTINATION%\DeveloperCode.zip"
+        tar.exe -a -c -f "%DESTINATION%\DeveloperCode.zip" -C "%SOURCE_PATH%" .
+        if errorlevel 1 (
+          echo ERROR: ZIP creation failed.
+          exit /b 1
+        )
 
-          $zipPath = Join-Path $destination 'DeveloperCode.zip'
+        echo Verifying ZIP archive...
+        tar.exe -t -f "%DESTINATION%\DeveloperCode.zip" >nul
+        if errorlevel 1 (
+          echo ERROR: ZIP verification failed.
+          exit /b 1
+        )
 
-          if (Test-Path -LiteralPath $zipPath) {
-            Remove-Item -LiteralPath $zipPath -Force
-          }
-
-          $source = (Resolve-Path -LiteralPath $sourcePath).Path
-          Compress-Archive -Path (Join-Path $source '*') -DestinationPath $zipPath -Force
-
-          if (-not (Test-Path -LiteralPath $zipPath -PathType Leaf)) {
-            throw 'ZIP creation failed.'
-          }
-
-          Add-Type -AssemblyName System.IO.Compression.FileSystem
-          $zip = [System.IO.Compression.ZipFile]::OpenRead($zipPath)
-
-          try {
-            if ($zip.Entries.Count -eq 0) {
-              throw 'ZIP was created but contains no files.'
-            }
-
-            Write-Host ('ZIP verified. Files: ' + $zip.Entries.Count)
-          }
-          finally {
-            $zip.Dispose()
-          }
-
-          Write-Host ('ZIP saved to: ' + $zipPath)
-        }"
+        echo SUCCESS: ZIP created and verified.
+        echo Location: %DESTINATION%\DeveloperCode.zip
