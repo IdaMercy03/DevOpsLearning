@@ -15,7 +15,7 @@ runs:
   using: composite
   steps:
     - name: Validate path, create ZIP, and verify output
-      shell: powershell
+      shell: cmd
       env:
         SOURCE_PATH: ${{ inputs.source-path }}
         DESTINATION: ${{ inputs.destination }}
