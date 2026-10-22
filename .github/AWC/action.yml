@@ -1,0 +1,10 @@
+
+name: Hello World Child Action
+description: Runs the Hello World Python program
+
+runs:
+  using: composite
+  steps:
+    - name: Run Python program
+      shell: cmd
+      run: python Folder\HelloWorld\hello.py

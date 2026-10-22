@@ -1,0 +1,20 @@
+
+name: Parent Workflow
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  call-child-action:
+    name: Call Child Action
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Call Hello World Child Action
+        uses: ./.github/AWC
