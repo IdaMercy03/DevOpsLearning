@@ -1,20 +1,30 @@
 
-name: Parent Workflow
+name: Package Developer Code
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
-  workflow_dispatch:
-
 jobs:
-  call-child-action:
-    name: Call Child Action
+  package-code:
+    name: Fetch, Validate and Zip
     runs-on: self-hosted
 
     steps:
-      - name: Checkout repository
+      - name: Checkout automation repository
         uses: actions/checkout@v4
 
-      - name: Call Hello World Child Action
+      - name: Checkout developer repository
+        uses: actions/checkout@v4
+        with:
+          repository: IdaMercy03/DeveloperCode
+          ref: main
+          token: ${{ secrets.DEVELOPER_CODE_TOKEN }}
+          path: developer-source
+
+      - name: Validate and zip developer code
         uses: ./.github/AWC
+        with:
+          source-path: developer-source
+          destination: 'D:\DevOpsPackages'

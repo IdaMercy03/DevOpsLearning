@@ -1,10 +1,60 @@
 
-name: Hello World Child Action
-description: Runs the Hello World Python program
+name: Validate and Zip Developer Code
+description: Validates a source path, creates a ZIP, and saves it on D drive
+
+inputs:
+  source-path:
+    description: Path of the downloaded developer code
+    required: true
+  destination:
+    description: Destination folder on the Windows runner
+    required: false
+    default: 'D:\DevOpsPackages'
 
 runs:
   using: composite
   steps:
-    - name: Run Python program
-      shell: cmd
-      run: python Folder\HelloWorld\hello.py
+    - name: Validate path, create ZIP, and verify output
+      shell: powershell
+      env:
+        SOURCE_PATH: ${{ inputs.source-path }}
+        DESTINATION: ${{ inputs.destination }}
+      run: |
+        $ErrorActionPreference = 'Stop'
+
+        $source = Resolve-Path -LiteralPath $env:SOURCE_PATH -ErrorAction SilentlyContinue
+
+        if (-not $source -or -not (Test-Path -LiteralPath $source.Path -PathType Container)) {
+          throw "Source directory does not exist: $env:SOURCE_PATH"
+        }
+
+        if (-not (Test-Path -LiteralPath 'D:\' -PathType Container)) {
+          throw "D: drive is not available on this runner."
+        }
+
+        New-Item -ItemType Directory -Force -Path $env:DESTINATION | Out-Null
+
+        $zipPath = Join-Path $env:DESTINATION 'DeveloperCode.zip'
+
+        if (Test-Path -LiteralPath $zipPath) {
+          Remove-Item -LiteralPath $zipPath -Force
+        }
+
+        Compress-Archive -Path (Join-Path $source.Path '*') -DestinationPath $zipPath -Force
+
+        if (-not (Test-Path -LiteralPath $zipPath -PathType Leaf)) {
+          throw "ZIP creation failed: $zipPath"
+        }
+
+        $zip = [System.IO.Compression.ZipFile]::OpenRead($zipPath)
+        try {
+          if ($zip.Entries.Count -eq 0) {
+            throw "ZIP was created but contains no files."
+          }
+          Write-Host "ZIP verified. Files: $($zip.Entries.Count)"
+        }
+        finally {
+          $zip.Dispose()
+        }
+
+        Write-Host "ZIP saved to: $zipPath"
