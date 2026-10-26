@@ -1,28 +1,27 @@
+
 name: AWC Action
-description: Prints a and passes fruits to Python
+description: Receives JSON parameters and passes fruits to Python
 
 inputs:
   a:
-    description: Value of a
+    description: Value of a from JSON
     required: true
 
   fruits:
-    description: Fruit values
+    description: Fruits from JSON
     required: true
 
 runs:
   using: composite
   steps:
     - name: Print a
-      shell: powershell
+      shell: cmd
       env:
         A: ${{ inputs.a }}
-      run: |
-        Write-Host "a = $env:A"
+      run: echo a = %A%
 
     - name: Run Python
-      shell: powershell
+      shell: cmd
       env:
         FRUITS: ${{ inputs.fruits }}
-      run: |
-        python "Folder\HelloWorld\hello.py"
+      run: python Folder\HelloWorld\hello.py
