@@ -1,34 +1,3 @@
-
-# name: Package Developer Code
-
-# on:
-#   workflow_dispatch:
-#   push:
-#     branches:
-#       - main
-# jobs:
-#   package-code:
-#     name: Fetch, Validate and Zip
-#     runs-on: self-hosted
-
-#     steps:
-#       - name: Checkout automation repository
-#         uses: actions/checkout@v4
-
-#       - name: Checkout developer repository
-#         uses: actions/checkout@v4
-#         with:
-#           repository: IdaMercy03/DeveloperCode
-#           ref: main
-#           token: ${{ secrets.DEVELOPER_CODE_TOKEN }}
-#           path: developer-source
-
-#       - name: Validate and zip developer code
-#         uses: ./.github/AWC
-#         with:
-#           source-path: developer-source
-#           destination: 'D:\DevOpsPackages'
-
 name: Parent Child JSON Pipeline
 
 on:
@@ -49,13 +18,13 @@ jobs:
         id: config
         shell: powershell
         run: |
-          $json = Get-Content "Config/values.json" -Raw | ConvertFrom-Json
+          $json = Get-Content "config/values.json" -Raw | ConvertFrom-Json
 
           "a=$($json.a)" >> $env:GITHUB_OUTPUT
           "fruits=$($json.fruits)" >> $env:GITHUB_OUTPUT
 
       - name: Call child action
-        uses: ./.github/action/AWC
+        uses: ./.github/AWC
         with:
           a: ${{ steps.config.outputs.a }}
           fruits: ${{ steps.config.outputs.fruits }}

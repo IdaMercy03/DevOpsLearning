@@ -1,77 +1,13 @@
-
-# name: Validate and Zip Developer Code
-# description: Validates developer code and packages it as a ZIP file
-
-# inputs:
-#   source-path:
-#     description: Path of the downloaded developer code
-#     required: true
-
-#   destination:
-#     description: Destination folder on the runner
-#     required: false
-#     default: 'D:\DevOpsPackages'
-
-# runs:
-#   using: composite
-#   steps:
-#     - name: Validate path and create ZIP using CMD
-#       shell: cmd
-#       env:
-#         SOURCE_PATH: ${{ inputs.source-path }}
-#         DESTINATION: ${{ inputs.destination }}
-#       run: |
-#         echo Checking source directory...
-#         if not exist "%SOURCE_PATH%\." (
-#           echo ERROR: Source directory does not exist: %SOURCE_PATH%
-#           exit /b 1
-#         )
-
-#         echo Checking D drive...
-#         if not exist "D:\" (
-#           echo ERROR: D drive is not available.
-#           exit /b 1
-#         )
-
-#         echo Checking ZIP utility...
-#         where tar.exe >nul 2>&1
-#         if errorlevel 1 (
-#           echo ERROR: tar.exe is not available on this runner.
-#           exit /b 1
-#         )
-
-#         echo Creating destination directory...
-#         if not exist "%DESTINATION%\." mkdir "%DESTINATION%"
-#         if errorlevel 1 exit /b 1
-
-#         echo Creating ZIP archive...
-#         if exist "%DESTINATION%\DeveloperCode.zip" del /q "%DESTINATION%\DeveloperCode.zip"
-#         tar.exe -a -c -f "%DESTINATION%\DeveloperCode.zip" -C "%SOURCE_PATH%" .
-#         if errorlevel 1 (
-#           echo ERROR: ZIP creation failed.
-#           exit /b 1
-#         )
-
-#         echo Verifying ZIP archive...
-#         tar.exe -t -f "%DESTINATION%\DeveloperCode.zip" >nul
-#         if errorlevel 1 (
-#           echo ERROR: ZIP verification failed.
-#           exit /b 1
-#         )
-
-#         echo SUCCESS: ZIP created and verified.
-#         echo Location: %DESTINATION%\DeveloperCode.zip
-
 name: AWC Action
-description: Receives JSON parameters and passes fruits to Python
+description: Prints a and passes fruits to Python
 
 inputs:
   a:
-    description: Value of a from JSON
+    description: Value of a
     required: true
 
   fruits:
-    description: Fruits from JSON
+    description: Fruit values
     required: true
 
 runs:
@@ -82,12 +18,11 @@ runs:
       env:
         A: ${{ inputs.a }}
       run: |
-        Write-Host "Child action output:"
         Write-Host "a = $env:A"
 
-    - name: Run Python program
+    - name: Run Python
       shell: powershell
       env:
         FRUITS: ${{ inputs.fruits }}
       run: |
-        python "HelloWorld\hello.py"
+        python "Folder\HelloWorld\hello.py"
