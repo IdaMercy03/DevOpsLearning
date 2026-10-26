@@ -16,12 +16,9 @@ jobs:
 
       - name: Read JSON variables
         id: config
-        shell: powershell
-        run: |
-          $json = Get-Content "config/values.json" -Raw | ConvertFrom-Json
-
-          "a=$($json.a)" >> $env:GITHUB_OUTPUT
-          "fruits=$($json.fruits)" >> $env:GITHUB_OUTPUT
+        shell: cmd
+        run: python config\read_config.py
+     
 
       - name: Call child action
         uses: ./.github/AWC
