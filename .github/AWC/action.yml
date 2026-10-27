@@ -25,8 +25,34 @@
 #       env:
 #         FRUITS: ${{ inputs.fruits }}
 #       run: python Folder\HelloWorld\hello.py
+# name: AWC Action
+# description: Receives parameters and runs the required steps
+
+# inputs:
+#   a:
+#     description: Value of a
+#     required: true
+
+#   fruits:
+#     description: Fruits value
+#     required: true
+
+# runs:
+#   using: composite
+#   steps:
+#     - name: Print a
+#       shell: cmd
+#       env:
+#         A: ${{ inputs.a }}
+#       run: echo a = %A%
+
+#     - name: Run Python
+#       shell: cmd
+#       env:
+#         FRUITS: ${{ inputs.fruits }}
+#       run: python Folder\HelloWorld\hello.py
 name: AWC Action
-description: Receives parameters and runs the required steps
+description: Receives and prints parameters
 
 inputs:
   a:
@@ -34,7 +60,7 @@ inputs:
     required: true
 
   fruits:
-    description: Fruits value
+    description: Fruit values
     required: true
 
 runs:
@@ -46,8 +72,8 @@ runs:
         A: ${{ inputs.a }}
       run: echo a = %A%
 
-    - name: Run Python
+    - name: Print fruits
       shell: cmd
       env:
         FRUITS: ${{ inputs.fruits }}
-      run: python Folder\HelloWorld\hello.py
+      run: echo fruits = %FRUITS%
