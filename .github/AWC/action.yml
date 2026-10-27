@@ -52,7 +52,7 @@
 #         FRUITS: ${{ inputs.fruits }}
 #       run: python Folder\HelloWorld\hello.py
 name: AWC Action
-description: Receives and prints parameters
+description: Receives parameters from parent workflow
 
 inputs:
   a:

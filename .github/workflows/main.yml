@@ -51,26 +51,30 @@
 #         with:
 #           a: ${{ env.A }}
 #           fruits: ${{ env.FRUITS }}
-name: Parent Child YAML Pipeline
- 
+
+name: Parent Child JSON Pipeline
+
 on:
   push:
     branches:
       - main
   workflow_dispatch:
- 
+
 jobs:
   run-parent:
     runs-on: self-hosted
- 
-    env:
-      A: 10
-      FRUITS: apple,mango,orange
- 
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
- 
+
+      - name: Read JSON and set environment variables
+        shell: powershell
+        run: |
+          $config = Get-Content "config/values.json" -Raw | ConvertFrom-Json
+          "A=$($config.a)" >> $env:GITHUB_ENV
+          "FRUITS=$($config.fruits)" >> $env:GITHUB_ENV
+
       - name: Call child action
         uses: ./.github/AWC
         with:
