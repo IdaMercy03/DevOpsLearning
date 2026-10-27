@@ -1,14 +1,40 @@
 
+# name: AWC Action
+# description: Receives JSON parameters and passes fruits to Python
+
+# inputs:
+#   a:
+#     description: Value of a from JSON
+#     required: true
+
+#   fruits:
+#     description: Fruits from JSON
+#     required: true
+
+# runs:
+#   using: composite
+#   steps:
+#     - name: Print a
+#       shell: cmd
+#       env:
+#         A: ${{ inputs.a }}
+#       run: echo a = %A%
+
+#     - name: Run Python
+#       shell: cmd
+#       env:
+#         FRUITS: ${{ inputs.fruits }}
+#       run: python Folder\HelloWorld\hello.py
 name: AWC Action
-description: Receives JSON parameters and passes fruits to Python
+description: Receives parameters and runs the required steps
 
 inputs:
   a:
-    description: Value of a from JSON
+    description: Value of a
     required: true
 
   fruits:
-    description: Fruits from JSON
+    description: Fruits value
     required: true
 
 runs:
