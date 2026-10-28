@@ -72,8 +72,8 @@ runs:
         A: ${{ inputs.a }}
       run: echo a = %A%
 
-    - name: Print fruits
+    - name: Print fruits using Python
       shell: cmd
       env:
         FRUITS: ${{ inputs.fruits }}
-      run: echo fruits = %FRUITS%
+      run: python Folder\HelloWorld\hello.py
