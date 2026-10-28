@@ -1,3 +1,4 @@
+
 name: Parent Child JSON Pipeline
 
 on:
@@ -15,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Read JSON and set environment variables
-        shell: powershell
+        shell: powershell -ExecutionPolicy Bypass -File {0}
         run: |
           $config = Get-Content "config/values.json" -Raw | ConvertFrom-Json
           "A=$($config.a)" >> $env:GITHUB_ENV
